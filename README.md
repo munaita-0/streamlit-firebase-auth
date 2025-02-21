@@ -25,13 +25,12 @@ auth = FirebaseAuth(
             "appId": "YOUR_APP_ID",
         })
 
-# display login form
-result = auth.login_form()
+login_user = auth.check_session()
 
-# display logout form
-auth.logout_form()
-
-result = auth.check_session()
+if login_user:
+    auth.logout_form()
+else:
+    suth.login_form()
 ```
 
 # API Reference
