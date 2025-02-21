@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+asyncio_default_fixture_loop_scope = "function"
+
+
+[project]
+name = "streamlit-firebase-auth"
+version = "1.0.1"
+authors = [
+    {name="Suzuki Shogo", email="suzuki.shogo@commondo.jp"},
+]
+description = "Streamlit component for Firebae auth"
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+requires = [
+]
+
+[project.urls]
+"Homepage" = "https://github.com/munaita-0/streamlit-firebase-auth"
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "streamlit_firebase_auth/frontend/node_modules/**",
+]
+
+[tool.hatch.build.targets.wheel]
+exclude = [
+    "streamlit_firebase_auth/frontend/node_modules/**",
+]
