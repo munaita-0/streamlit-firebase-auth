@@ -58,6 +58,25 @@ Checks the current session to determine if the user is authenticated.
 **Return (dict):**  
 A dictionary containing the user information provided by Firebase upon successful login.
 
+## auth.signup(email: str, password: str)
+**Description:**
+Signs up a new user using Firebase Admin.
+This function creates a new user account and returns the result of the signup.
+
+**Return (dict):**
+
+- `success` (bool): True if the signup was successful; otherwise, False.
+- `message` (str, optional): An error message if the signup failed.
+
+## auth.send_password_reset_email(email: str)
+**Description:**
+Sends a password reset email to the specified email address.
+This function handles the email sending process and returns the result.
+
+**Return (dict):**
+
+- `success` (bool): True if the email was sent successfully; otherwise, False.
+- `message` (str, optional): An error message if sending the email failed.
 
 # Detailed Usage
 
