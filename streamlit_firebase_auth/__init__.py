@@ -2,7 +2,10 @@ import os
 import streamlit.components.v1 as components
 import warnings
 from typing import Any
-import time
+import firebase_admin
+from firebase_admin import auth
+from firebase_admin.exceptions import FirebaseError
+
 
 def _get_component_func(release=True):
     if not release:
@@ -19,7 +22,6 @@ def _get_component_func(release=True):
 class FirebaseAuth:
 
     def __init__(self, firebase_config = dict[str, str], lang: str = "en"):
-        print("aaaaaaaaaaaaaa")
         self._component_func = _get_component_func(False)
         self.firebase_config = firebase_config
         self.lang = lang
@@ -43,20 +45,27 @@ class FirebaseAuth:
         return_val = self._component_func(name="CheckSession", firebase_config=self.firebase_config, lang=self.lang, default=None)
         return return_val
 
-    # signup user
-    # After executing the signup, {"success": True, "user": UserInfo } or {"success": False, "message": "xxx"} will be returned
+    # signup user with firebase-admin
+    # After executing the signup, {"success": True } or {"success": False, "message": "xxx"} will be returned
+    # Required to run it with an IAM that has firebase-admin permissions assigned.
     # https://firebase.google.com/docs/admin/setup?hl=ja
-    def signup(self, email: str, password: str) -> dict[str, Any]:
-        return_val = self._component_func(name="Signup", email=email, password=password, firebase_config=self.firebase_config, lang=self.lang, default=None)
-        return_val = self._component_func(name="Signup", email=email, password=password, firebase_config=self.firebase_config, lang=self.lang, default=None)
-        for i in range(10):
-            print(f"===={i}====")
-            print(return_val)
-            if return_val is not None:
-                break
-            time.sleep(0.3)
-            
-        print("######")
-        print(return_val)
-        print("#####")
-        return return_val
+    # https://firebase.google.com/docs/auth/admin/manage-users?hl=ja#create_a_user
+    def signup(self, email: str, password: str) -> None:
+        try:
+            firebase_admin.get_app()
+        except ValueError:
+            try:
+                firebase_admin.initialize_app()
+            except FirebaseError as e:
+                return {"success": False, "message": "firbase-adminの初期化に失敗しました"}
+
+        try:
+            auth.create_user(email=email, password=password)
+            return {"success": True}
+        except auth.EmailAlreadyExistsError:
+            return {"success": False, "message": "既に同じメールアドレスのユーザーが存在します。"}
+        except auth.InvalidPasswordError:
+            return {"success": False, "message": "パスワードの要件を満たしていません。"}
+        except FirebaseError as e:
+            return {"success": False, "message": "ユーザー作成に失敗しました"}
+

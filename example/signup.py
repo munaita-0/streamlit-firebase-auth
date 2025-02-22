@@ -10,9 +10,7 @@ def signup_form():
         if st.form_submit_button("signup"):
             result = st.session_state.auth.signup(email, password)
             if result["success"]:
-                st.session_state.login_user = result["user"]
-                st.session_state.login = True
-                st.success("signup success")
+                st.toast("signup success")
                 st.switch_page("page1.py")
             else:
                 st.error(f"signup failed: {result["message"]}")

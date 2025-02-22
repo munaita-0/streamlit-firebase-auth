@@ -8,6 +8,7 @@ streamlit = "*"
 build = "*"
 twine = "*"
 streamlit-firebase-auth = "*"
+firebase-admin = "*"
 
 [dev-packages]
 
