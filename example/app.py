@@ -11,26 +11,23 @@ if "auth" not in st.session_state or not st.session_state.auth:
             # "messagingSenderId": "YOUR_MESSAGING_SENDER_ID",
             # "appId": "YOUR_APP_ID",
         })
-if "login" not in st.session_state or not st.session_state.login:
-    st.session_state.login_user = st.session_state.auth.check_session()
-    st.session_state.login = st.session_state.login_user is not None
+with st.sidebar:
+    result = st.session_state.auth.logout_form()
+    if result:
+        if result["success"]:
+            st.success("logged out")
+        else:
+            st.error("failed to log out")
+
+st.session_state.login_user = st.session_state.auth.check_session()
+st.session_state.login = st.session_state.login_user is not None
 
 pages = [
     st.Page("page1.py"),
     st.Page("page2.py"),
-    st.Page("page3.py"),
+    st.Page("reset_password.py"),
     st.Page("signup.py"),
 ]
-
-with st.sidebar:
-    result = st.session_state.auth.logout_form()
-    if result:
-        st.session_state.login = result["success"]
-        if result["success"]:
-            st.session_state.login = False
-            st.success("successfully logged out")
-        else:
-            st.error("failed to log out")
 
 pg = st.navigation(pages)
 pg.run()

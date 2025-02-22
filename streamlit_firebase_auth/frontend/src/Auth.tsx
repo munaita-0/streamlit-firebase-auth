@@ -4,16 +4,17 @@ import {
   Streamlit,
   withStreamlitConnection,
 } from "streamlit-component-lib"
-import { signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { Button, TextField, Box, Typography, Paper } from '@mui/material';
 import { initializeApp, getApps } from 'firebase/app';
-import { getAuth, Auth as FirebaseAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, Auth as FirebaseAuth } from 'firebase/auth';
 import GoogleIcon from '@mui/icons-material/Google';
 import EmailIcon from '@mui/icons-material/Email';
 
 interface Props {
   lang: "en" | "jp";
   auth: FirebaseAuth;
+  email?: string;
 }
 
 const translations = {
@@ -47,7 +48,7 @@ const LoginFormFunction: React.FC<Props> = ({ lang, auth }) => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
     .then((result) => {
-      Streamlit.setComponentValue({ success: true, message: null})
+      Streamlit.setComponentValue({ success: true, message: null, user: result.user.toJSON() });
     }).catch((error) => {
       Streamlit.setComponentValue({ success: false, message: error.message})
     });
@@ -127,6 +128,42 @@ const CheckSessionFunction: React.FC<Props> = ({ lang, auth }) => {
   return (<></>)
 }
 
+// Send a password reset email
+const SendPasswordResetEmailFunction: React.FC<Props> = ({ lang, auth, email }) => {
+  useEffect(() => {
+    Streamlit.setFrameHeight();
+  }, []);
+
+  const handleSendPasswordResetEmail = () => {
+      if (email) {
+        sendPasswordResetEmail(auth, email)
+        .then(() => {
+          Streamlit.setComponentValue({ success: true });
+        }).catch((error) => {
+          Streamlit.setComponentValue({ success: false, message: error.message });
+        });
+      } else {
+        Streamlit.setComponentValue({ success: false, message: "Email is required" });
+      }
+    };
+
+  return (
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', backgroundColor: '#f5f5f5', padding: 2 }}>
+      <Paper elevation={3} sx={{ padding: 4, borderRadius: 2, maxWidth: 400, width: '100%', margin: 2 }}>
+        <Button
+          variant="contained"
+          color="success"
+          onClick={handleSendPasswordResetEmail}
+          fullWidth
+          sx={{ fontSize: '1.2rem', padding: '10px 20px' }}
+        >
+          Send Email
+        </Button>
+      </Paper>
+    </Box>
+  )
+}
+
 class Auth extends React.Component<ComponentProps> {
   private authInstance;
 
@@ -142,6 +179,7 @@ class Auth extends React.Component<ComponentProps> {
   public render = (): ReactNode => {
     const name = this.props.args["name"];
     const lang: "en" | "jp" = this.props.args["lang"] === "jp" ? "jp" : "en";
+    const email = this.props.args["email"];
 
     if (name === "LoginForm") {
       return <LoginFormFunction lang={lang} auth={this.authInstance} />;
@@ -149,6 +187,8 @@ class Auth extends React.Component<ComponentProps> {
       return <LogoutFormFunction lang={lang} auth={this.authInstance} />;
     } else if (name === "CheckSession") {
       return <CheckSessionFunction lang={lang} auth={this.authInstance} />;
+    } else if (name === "SendPasswordResetEmail") {
+      return <SendPasswordResetEmailFunction lang={lang} auth={this.authInstance} email={email} />;
     } else {
       return <div>Invalid name: {name}</div>
     }

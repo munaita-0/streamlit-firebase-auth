@@ -27,7 +27,7 @@ class FirebaseAuth:
         self.lang = lang
 
     # Displays the login form
-    # After executing the login, {"success": True} or {"success": False, "message": "xxx"} will be returned
+    # After executing the login, {"success": True, "user": UserInfo } or {"success": False, "message": "xxx"} will be returned
     def login_form(self) -> dict[str, str]:
         return_val = self._component_func(name="LoginForm", firebase_config=self.firebase_config, lang=self.lang, height=500, default=None)
         return return_val
@@ -36,6 +36,12 @@ class FirebaseAuth:
     # After executing the logout, {"success": True} or {"success": False, "message": "xxx"} will be returned
     def logout_form(self) -> dict[str, str]:
         return_val = self._component_func(name="LogoutForm", firebase_config=self.firebase_config, lang=self.lang, default=None)
+        return return_val
+    
+    # Displays the password reset button
+    # After sending email, {"success": True} or {"success": False, "message": "xxx"} will be returned
+    def send_password_reset_email(self, email: str) -> dict[str, str]:
+        return_val = self._component_func(name="SendPasswordResetEmail", firebase_config=self.firebase_config, lang=self.lang, email=email, default=None)
         return return_val
 
     # Checks the session

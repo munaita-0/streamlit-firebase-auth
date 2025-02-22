@@ -8,9 +8,5 @@ if __name__ == "__page__":
         page2()
     else:
         result = st.session_state.auth.login_form()
-        if result:
-            st.session_state.login = result["success"]
-            if result["success"]:
-                st.switch_page("page1.py")
-            else:
-                st.error("login failed")
+        if result and not result["success"]:
+            st.error(f"login failed: {result["message"]}")
