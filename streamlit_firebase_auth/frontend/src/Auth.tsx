@@ -7,13 +7,15 @@ import {
 import { signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from 'firebase/auth';
 import { Button, TextField, Box, Typography, Paper } from '@mui/material';
 import { initializeApp, getApps } from 'firebase/app';
-import { getAuth, Auth as FirebaseAuth } from 'firebase/auth';
+import { getAuth, Auth as FirebaseAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import GoogleIcon from '@mui/icons-material/Google';
 import EmailIcon from '@mui/icons-material/Email';
 
 interface Props {
   lang: "en" | "jp";
   auth: FirebaseAuth;
+  email?: string;
+  password?: string;
 }
 
 const translations = {
@@ -116,10 +118,6 @@ const LogoutFormFunction: React.FC<Props> = ({ lang, auth }) => {
 }
 
 const CheckSessionFunction: React.FC<Props> = ({ lang, auth }) => {
-  useEffect(() => {
-    Streamlit.setFrameHeight();
-  }, []);
-
   auth.onAuthStateChanged((user) => {
     if (user) {
       Streamlit.setComponentValue(user.toJSON());
@@ -131,6 +129,44 @@ const CheckSessionFunction: React.FC<Props> = ({ lang, auth }) => {
   return (<></>)
 }
 
+// Firebase Authのサインアップ処理
+// マウント後に一回だけhandleSignupを実行する
+const SignupFunction: React.FC<Props> = ({ auth, email, password }) => {
+  const didSignup = React.useRef(false);
+
+  useEffect(() => {
+    if (didSignup.current) return;
+    didSignup.current = true; 
+
+    const handleSignup = async () => {
+      if (!email || !password) {
+        Streamlit.setComponentValue({
+          success: false,
+          message: "Email and password must not be empty",
+        });
+        return;
+      }
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        Streamlit.setComponentValue({
+          success: true,
+          user: userCredential.user.toJSON(),
+        });
+      } catch (error) {
+        const errorMessage = (error as Error).message;
+        Streamlit.setComponentValue({
+          success: false,
+          message: errorMessage,
+        });
+      }
+    };
+
+    handleSignup();
+  }, [auth, email, password]);
+
+  return (<></>);
+};
 
 class Auth extends React.Component<ComponentProps> {
   private authInstance;
@@ -147,6 +183,8 @@ class Auth extends React.Component<ComponentProps> {
   public render = (): ReactNode => {
     const name = this.props.args["name"];
     const lang: "en" | "jp" = this.props.args["lang"] === "jp" ? "jp" : "en";
+    const email = this.props.args["email"];
+    const password = this.props.args["password"];
 
     if (name === "LoginForm") {
       return <LoginFormFunction lang={lang} auth={this.authInstance} />;
@@ -154,6 +192,8 @@ class Auth extends React.Component<ComponentProps> {
       return <LogoutFormFunction lang={lang} auth={this.authInstance} />;
     } else if (name === "CheckSession") {
       return <CheckSessionFunction lang={lang} auth={this.authInstance} />;
+    } else if (name === "Signup") {
+      return <SignupFunction lang={lang} auth={this.authInstance} email={email} password={password} />;
     } else {
       return <div>Invalid name: {name}</div>
     }
