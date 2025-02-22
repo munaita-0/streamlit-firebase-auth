@@ -25,6 +25,7 @@ const translations = {
     email: "Login with Email",
     emailLabel: "Email Address",
     passwordLabel: "Password",
+    sendMail: "Send Email",
   },
   jp: {
     title: "ログイン",
@@ -33,6 +34,7 @@ const translations = {
     email: "メールでログイン",
     emailLabel: "メールアドレス",
     passwordLabel: "パスワード",
+    sendMail: "メール送信",
   }
 };
 
@@ -148,19 +150,13 @@ const SendPasswordResetEmailFunction: React.FC<Props> = ({ lang, auth, email }) 
     };
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', backgroundColor: '#f5f5f5', padding: 2 }}>
-      <Paper elevation={3} sx={{ padding: 4, borderRadius: 2, maxWidth: 400, width: '100%', margin: 2 }}>
-        <Button
-          variant="contained"
-          color="success"
-          onClick={handleSendPasswordResetEmail}
-          fullWidth
-          sx={{ fontSize: '1.2rem', padding: '10px 20px' }}
-        >
-          Send Email
-        </Button>
-      </Paper>
-    </Box>
+    <Button
+      variant="contained"
+      color="primary"
+      onClick={handleSendPasswordResetEmail}
+    >
+      {translations[lang].sendMail}
+    </Button>
   )
 }
 

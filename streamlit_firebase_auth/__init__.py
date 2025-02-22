@@ -57,21 +57,35 @@ class FirebaseAuth:
     # https://firebase.google.com/docs/admin/setup?hl=ja
     # https://firebase.google.com/docs/auth/admin/manage-users?hl=ja#create_a_user
     def signup(self, email: str, password: str) -> None:
+        TRANSLATIONS = {
+            "en": {
+                "failed_init": "Failed to initialize firbase-admin",
+                "email_exists": "The user with the same email address already exists.",
+                "invalid_password": "The password does not meet the requirements.",
+                "failed_create_user": "Failed to create user"
+            },
+            "jp": {
+                "failed_init": "firbase-adminの初期化に失敗しました",
+                "email_exists": "既に同じメールアドレスのユーザーが存在します。",
+                "invalid_password": "パスワードの要件を満たしていません。",
+                "failed_create_user": "ユーザー作成に失敗しました"
+            }
+        }
         try:
             firebase_admin.get_app()
         except ValueError:
             try:
                 firebase_admin.initialize_app()
             except FirebaseError as e:
-                return {"success": False, "message": "firbase-adminの初期化に失敗しました"}
+                return {"success": False, "message": TRANSLATIONS[self.lang]["failed_init"] + f": {str(e)}"}
 
         try:
             auth.create_user(email=email, password=password)
             return {"success": True}
         except auth.EmailAlreadyExistsError:
-            return {"success": False, "message": "既に同じメールアドレスのユーザーが存在します。"}
-        except auth.InvalidPasswordError:
-            return {"success": False, "message": "パスワードの要件を満たしていません。"}
-        except FirebaseError as e:
-            return {"success": False, "message": "ユーザー作成に失敗しました"}
+            return {"success": False, "message": TRANSLATIONS[self.lang]["email_exists"] + f": {str(e)}"}
+        except Exception as e:
+            if "password" in str(e).lower():
+                return {"success": False, "message": TRANSLATIONS[self.lang]["invalid_password"] + f": {str(e)}"}
+            return {"success": False, "message": TRANSLATIONS[self.lang]["failed_create_user"] + f": {str(e)}"}
 
