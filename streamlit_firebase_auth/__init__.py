@@ -22,7 +22,7 @@ def _get_component_func(release=True):
 class FirebaseAuth:
 
     def __init__(self, firebase_config = dict[str, str], lang: str = "en"):
-        self._component_func = _get_component_func(False)
+        self._component_func = _get_component_func()
         self.firebase_config = firebase_config
         self.lang = lang
 
