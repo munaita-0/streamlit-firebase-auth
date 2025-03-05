@@ -1,3 +1,4 @@
 dist/*
 *.lock
 /streamlit_firebase_auth/frontend/node_modules
+/streamlit_firebase_auth/frontend/build/
