@@ -15,6 +15,7 @@ interface Props {
   lang: "en" | "jp";
   auth: FirebaseAuth;
   email?: string;
+  providers?: string[];
 }
 
 const translations = {
@@ -38,7 +39,7 @@ const translations = {
   }
 };
 
-const LoginFormFunction: React.FC<Props> = ({ lang, auth }) => {
+const LoginFormFunction: React.FC<Props> = ({ lang, auth, providers }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -70,6 +71,7 @@ const LoginFormFunction: React.FC<Props> = ({ lang, auth }) => {
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', backgroundColor: '#f5f5f5', padding: 2 }}>
       <Paper elevation={3} sx={{ padding: 4, borderRadius: 2, maxWidth: 400, width: '100%', margin: 2 }}>
         <Typography variant="h4" mb={2} align="center">{translations[lang].title}</Typography>
+        {providers && providers.includes('google') &&
         <Button
           variant="contained"
           color="primary"
@@ -78,7 +80,8 @@ const LoginFormFunction: React.FC<Props> = ({ lang, auth }) => {
           sx={{ mb: 2, fontSize: '1.2rem', padding: '10px 20px' }}
         >
           {translations[lang].google}
-        </Button>
+        </Button>}
+        {providers && providers.includes('email') &&
         <Box sx={{ width: '100%', mt: 2 }}>
           <TextField label={translations[lang].emailLabel} value={email} onChange={(e) => setEmail(e.target.value)} fullWidth sx={{ mb: 2 }} />
           <TextField label={translations[lang].passwordLabel} type="password" value={password} onChange={(e) => setPassword(e.target.value)} fullWidth sx={{ mb: 2 }} />
@@ -92,7 +95,7 @@ const LoginFormFunction: React.FC<Props> = ({ lang, auth }) => {
           >
             {translations[lang].email}
           </Button>
-        </Box>
+        </Box>}
       </Paper>
     </Box>
   )
@@ -176,9 +179,10 @@ class Auth extends React.Component<ComponentProps> {
     const name = this.props.args["name"];
     const lang: "en" | "jp" = this.props.args["lang"] === "jp" ? "jp" : "en";
     const email = this.props.args["email"];
+    const providers = this.props.args["providers"];
 
     if (name === "LoginForm") {
-      return <LoginFormFunction lang={lang} auth={this.authInstance} />;
+      return <LoginFormFunction lang={lang} auth={this.authInstance} providers={providers} />;
     } else if (name === "LogoutForm") {
       return <LogoutFormFunction lang={lang} auth={this.authInstance} />;
     } else if (name === "CheckSession") {

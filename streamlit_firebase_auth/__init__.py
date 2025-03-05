@@ -28,8 +28,8 @@ class FirebaseAuth:
 
     # Displays the login form
     # After executing the login, {"success": True, "user": UserInfo } or {"success": False, "message": "xxx"} will be returned
-    def login_form(self) -> dict[str, str]:
-        return_val = self._component_func(name="LoginForm", firebase_config=self.firebase_config, lang=self.lang, height=500, default=None)
+    def login_form(self, providers: list[str] = ["email", "google"]) -> dict[str, str]:
+        return_val = self._component_func(name="LoginForm", firebase_config=self.firebase_config, lang=self.lang, height=500, default=None, providers=providers)
         return return_val
 
     # Displays the logout form

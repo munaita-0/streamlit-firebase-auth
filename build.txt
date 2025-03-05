@@ -1,2 +1,25 @@
+# build
+
+## versioning with pyproject.toml
+
+## build frontend
+cd streamlit_firebase_auth/frontend
+npm run build
+
+## build python
+make sure __init__.py _get_component_func arg release being True.
 python -m build
 twine upload dist/*
+
+
+# test
+
+## start frontend
+cd streamlit_firebase_auth/frontend
+npm run start
+
+## start example
+export PYTHONPATH="$(pwd):$PYTHONPATH"
+make sure __init__.py _get_component_func arg release being False.
+cd example
+streamlit run example/app.py
