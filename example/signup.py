@@ -16,8 +16,7 @@ def signup_form():
                 st.error(f"signup failed: {result["message"]}")
             
 
-if __name__ == "__page__":
-    if st.session_state.login:
-        page4()
-    else:
-        signup_form()
+if st.session_state.login:
+    page4()
+else:
+    signup_form()

@@ -8,10 +8,9 @@ def page3():
         else:
             st.error(f"failed to send password reset email: {result["message"]}")
 
-if __name__ == "__page__":
-    if st.session_state.login:
-        page3()
-    else:
-        result = st.session_state.auth.login_form()
-        if result and not result["success"]:
-            st.error(f"login failed: {result["message"]}")
+if st.session_state.login:
+    page3()
+else:
+    result = st.session_state.auth.login_form()
+    if result and not result["success"]:
+        st.error(f"login failed: {result["message"]}")

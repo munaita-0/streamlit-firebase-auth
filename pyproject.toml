@@ -8,7 +8,7 @@ asyncio_default_fixture_loop_scope = "function"
 
 [project]
 name = "streamlit-firebase-auth"
-version = "1.0.5"
+version = "1.0.6"
 authors = [
     {name="Suzuki Shogo", email="suzuki.shogo@commondo.jp"},
 ]
@@ -21,7 +21,12 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 requires = [
-    "firebase-admin>=6.0.0"
+    "firebase-admin"
+]
+dependencies = [
+    "build>=1.2.2.post1",
+    "firebase-admin",
+    "twine>=6.1.0",
 ]
 
 [project.urls]
