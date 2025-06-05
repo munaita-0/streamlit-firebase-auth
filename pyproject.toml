@@ -5,10 +5,9 @@ build-backend = "hatchling.build"
 [tool.pytest.ini_options]
 asyncio_default_fixture_loop_scope = "function"
 
-
 [project]
 name = "streamlit-firebase-auth"
-version = "1.0.6"
+version = "1.1.5"
 authors = [
     {name="Suzuki Shogo", email="suzuki.shogo@commondo.jp"},
 ]
@@ -33,11 +32,11 @@ dependencies = [
 "Homepage" = "https://github.com/munaita-0/streamlit-firebase-auth"
 
 [tool.hatch.build.targets.sdist]
-exclude = [
-    "streamlit_firebase_auth/frontend/node_modules/**",
+artifacts = [
+    "streamlit_firebase_auth/frontend/build/",
 ]
 
 [tool.hatch.build.targets.wheel]
-exclude = [
-    "streamlit_firebase_auth/frontend/node_modules/**",
+artifacts = [
+    "streamlit_firebase_auth/frontend/build/",
 ]
